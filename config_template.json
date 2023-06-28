@@ -1,0 +1,4 @@
+{
+    "whitelist": ["names"],
+    "models": ["names"]
+}

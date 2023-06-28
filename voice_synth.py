@@ -71,7 +71,10 @@ async def UploadProcessedAudioFiles(directory_contents):
                     print('issue with uploading')
 
 def VerifyUserWhitelist(message):
-    if(str(message.author) in config['whitelist']):
+    
+    #Discord introduced tagless usernamse. Now all usernames end with #0 to the bot.
+    author = str(message.author)[:-2]
+    if(author in config['whitelist']):
         return True
     else:
         print('Invalid user ID')

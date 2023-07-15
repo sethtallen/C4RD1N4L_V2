@@ -19,7 +19,7 @@ with open('config.json') as json_file:
 print(config['models'])
 print(config['whitelist'])
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=4)
 async def CheckForUploads():
     while True:
         await asyncio.sleep(10)
@@ -44,7 +44,6 @@ async def DownloadUnprocessedAudioFile(message, conversion_params):
             print('Attempting download of' + str(attachment))
             await attachment.save(unprocessed_directory + filename)
             GenerateConversionDetails(filename, conversion_params)
-            conversion_queue.append({'channel':message.channel,'filename':filename})
         except Exception as e:
             print(e)
             return False
@@ -55,6 +54,21 @@ def GenerateConversionDetails(filename,conversion_params):
 
 async def UploadProcessedAudioFiles(directory_contents):
     for file in directory_contents:
+        converted_parameters = False
+        file_extension = file.split('.')[-1]
+        if(file_extension != 'json'):
+            with open(processed_directory+file+'.json' ,'r') as parameter_file:
+                converted_parameters = json.load(parameter_file)
+                parameter_file.close()
+
+            if(converted_parameters != False):
+                attachment = discord.File(processed_directory + file)
+                channel = client.get_channel(converted_parameters['channel_id'])
+                user = await client.fetch_user(converted_parameters['user_id'])
+                await channel.send(user.mention + "", file=attachment)
+                os.remove(processed_directory + file)
+                os.remove(processed_directory + file + '.json')
+"""
         for member in conversion_queue:
             print(file)
             print(member['filename'])
@@ -67,7 +81,7 @@ async def UploadProcessedAudioFiles(directory_contents):
                     os.remove(processed_directory + file)
                 except:
                     print('issue with uploading')
-
+"""
 def VerifyUserWhitelist(message):
     
     #Discord introduced tagless usernamse. Now all usernames end with #0 to the bot.
@@ -86,7 +100,7 @@ def VerifyMessageParameters(message):
     if(parameters[1] not in config['models']):
         print('Model unavailable')
         return False
-    return {'transpose':parameters[2],'model':parameters[1]}
+    return {'transpose':parameters[2],'model':parameters[1], 'channel_id':message.channel.id, 'user_id':message.author.id}
 
 def VerifyAttachment(message):
     if len(message.attachments) > 1:

@@ -11,7 +11,7 @@ conversion_queue = []
 
 unprocessed_directory = "eyai/discord/unprocessed/"
 processed_directory = 'eyai/discord/processed/'
-os.chdir("/home/geiru/C4RD1N4L")
+os.chdir("/home/geiru/C4RD1N4L_V2")
 
 with open('config.json') as json_file:
     config = json.load(json_file)

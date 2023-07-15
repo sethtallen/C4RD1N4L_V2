@@ -15,7 +15,9 @@ while True:
     if(len(directory_contents) > 0):
         for file in directory_contents:
             file_extension = file.split('.')[-1]
-            
+            #sometimes it tries to grab the json before transfer completes
+            if len(directory_contents) < 2:
+                break
             #can come in as a .wav, .mp3, etc. If its not a .json, it has a json file that matches
             if(file_extension != 'json'):
                 parameters=[]
@@ -32,5 +34,4 @@ while True:
                 #Delete the files from unprocessed
                 if(os.path.isfile(processed_dir+file)):
                     os.remove(unprocessed_dir+file)
-                    os.remove(unprocessed_dir+file+'.json')
-    
+                    os.rename(unprocessed_dir+file+'.json',processed_dir+file+'.json')

@@ -68,20 +68,7 @@ async def UploadProcessedAudioFiles(directory_contents):
                 await channel.send(user.mention + "", file=attachment)
                 os.remove(processed_directory + file)
                 os.remove(processed_directory + file + '.json')
-"""
-        for member in conversion_queue:
-            print(file)
-            print(member['filename'])
-            if(file == member['filename']):
-                try:
-                    print('Match found')
-                    attachment = discord.File(processed_directory + file)
-                    channel = client.get_channel(member['channel'].id)
-                    await channel.send(file=attachment)
-                    os.remove(processed_directory + file)
-                except:
-                    print('issue with uploading')
-"""
+
 def VerifyUserWhitelist(message):
     
     #Discord introduced tagless usernamse. Now all usernames end with #0 to the bot.

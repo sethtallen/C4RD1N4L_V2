@@ -50,11 +50,8 @@ async def DownloadUnprocessedAudioFile(message, conversion_params):
             return False
 
 def GenerateConversionDetails(filename,conversion_params):
-    with open(unprocessed_directory + filename +'.txt', 'w') as f:
-        f.write(conversion_params['transpose'])
-        f.write('\n')   
-        f.write(conversion_params['model'])
-        f.close()
+    with open(unprocessed_directory + filename +'.json', 'w') as f:
+        json.dump(conversion_params, f)
 
 async def UploadProcessedAudioFiles(directory_contents):
     for file in directory_contents:

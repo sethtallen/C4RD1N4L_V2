@@ -39,6 +39,8 @@ async def on_ready():
 async def on_message(message):
     
     if(str(message.content).startswith('~rbvc')):
+
+        #List models
         if(str(message.content).split(" ")[1] == "models"):
             model_list = ""
             for model in voice_synth.config['models']:

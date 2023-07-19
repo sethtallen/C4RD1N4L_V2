@@ -28,14 +28,11 @@ async def CheckForUploads():
             print('Found files to upload')
             await UploadProcessedAudioFiles(directory_contents)
 
-async def VoiceConversion(message):
-    if(VerifyUserWhitelist(message) == True and VerifyAttachment(message) == True):
-        conversion_params = VerifyMessageParameters(message)
-        print(conversion_params)
-        if(conversion_params != False):
-            await DownloadUnprocessedAudioFile(message, conversion_params)
+async def VoiceConversion(message,conversion_parameters):
+    if(VerifyUserWhitelist(message) == True):
+        await DownloadUnprocessedAudioFile(message, conversion_parameters)
 
-async def DownloadUnprocessedAudioFile(message, conversion_params):
+async def DownloadUnprocessedAudioFile(message, conversion_parameters):
         attachment = message.attachments[0]
         filename = str(attachment).split('/')[-1]
         filename = filename.split('.')
@@ -43,14 +40,15 @@ async def DownloadUnprocessedAudioFile(message, conversion_params):
         try:
             print('Attempting download of' + str(attachment))
             await attachment.save(unprocessed_directory + filename)
-            GenerateConversionDetails(filename, conversion_params)
+            GenerateConversionDetails(filename, conversion_parameters)
         except Exception as e:
             print(e)
             return False
 
-def GenerateConversionDetails(filename,conversion_params):
+#Drops a JSON file to the backend
+def GenerateConversionDetails(filename,conversion_parameters):
     with open(unprocessed_directory + filename +'.json', 'w') as f:
-        json.dump(conversion_params, f)
+        json.dump(conversion_parameters, f)
 
 async def UploadProcessedAudioFiles(directory_contents):
     for file in directory_contents:
@@ -78,24 +76,3 @@ def VerifyUserWhitelist(message):
     else:
         print('Invalid user ID')
         return False
-
-def VerifyMessageParameters(message):
-    parameters = message.content.split(' ')
-    if(len(parameters) > 3):
-        print('Too many parameters')
-        return False
-    if(parameters[1] not in config['models']):
-        print('Model unavailable')
-        return False
-    return {'transpose':parameters[2],'model':parameters[1], 'channel_id':message.channel.id, 'user_id':message.author.id}
-
-def VerifyAttachment(message):
-    if len(message.attachments) > 1:
-        return False
-    else:
-        attachment = message.attachments[0]
-        file_extension = str(attachment).split(".")
-        if(file_extension[-1] not in ['mp3','wav']):
-            print('Invalid attachment type')
-            return False
-    return True

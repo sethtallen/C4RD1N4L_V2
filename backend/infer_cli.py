@@ -10,6 +10,7 @@ from multiprocessing import cpu_count
 
 #os.chdir("/home/thinkingmachine/rbvc")
 using_cli = False
+device = "cuda:0" #set this to the default device you'd like to use.
 
 class Config:
     def __init__(self,device,is_half):

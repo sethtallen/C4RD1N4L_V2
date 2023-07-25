@@ -113,7 +113,7 @@ async def on_message(message):
         if(whitelisted):
             #List models
             if(str(message.content).split(" ")[1] == "models"):
-                ListRBVCModels(message)
+                await ListRBVCModels(message)
             
             elif(str(message.attachments) != "[]"):
                 

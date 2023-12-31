@@ -98,6 +98,18 @@ async def VerifyRBVCWhitelist(message):
         await message.reply('You are not authorized to use RBVC')
         return False
 
+async def VerifyRBVCWhitelist(message):
+
+    #Discord introduced tagless usernamse. Now all usernames end with #0 to the bot.
+    author = str(message.author)[:-2]
+
+    if(author in voice_synth.config['whitelist']):
+        return True
+    else:
+        print('Invalid user ID')
+        await message.reply('You are not authorized to use RBVC')
+        return False
+
 @client.event
 async def on_ready():       
     client.loop.create_task(voice_synth.CheckForUploads())
@@ -122,5 +134,18 @@ async def on_message(message):
 
                 if(conversion_parameters != False and valid_attachment == True):
                     await voice_synth.VoiceConversion(message,conversion_parameters)
+
+    if(str(message.content).startswith('~minecraft')):
+        
+        whitelisted_mc = ['cardinal']
+
+        
+        #Discord introduced tagless usernamse. Now all usernames end with #0 to the bot.
+        author = str(message.author)[:-2]
+
+        if(author in whitelisted_mc):
+            print('Valid user ID')
+        else:
+            print('Invalid user ID')
 
 client.run(discord_api_token)
